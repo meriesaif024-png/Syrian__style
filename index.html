@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MM PRAN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=El+Messiri:wght@500;700&family=Cairo:wght@400;600;800&family=Tajawal:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="storefrontRoot">
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="#home" class="brand" id="brandLogo"></a>
+    <nav class="main-nav">
+      <a href="#home" data-i18n="navHome">الرئيسية</a>
+      <a href="#shop" data-i18n="navShop">المتجر</a>
+      <a href="#story" data-i18n="navStory">قصتنا</a>
+      <a href="#contact" data-i18n="navContact">تواصل</a>
+    </nav>
+    <div class="header-actions">
+      <button type="button" id="langToggle" class="lang-btn">EN</button>
+      <button type="button" id="cartToggle" class="cart-btn" aria-label="Cart">
+        🛒 <span id="cartCount" class="cart-count">0</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="hero" id="home">
+  <div class="hero-content">
+    <h1 data-i18n="heroTitle">لبس بيحكي حكايتنا</h1>
+    <p data-i18n="heroSubtitle">تيشيرتات سورية الهوية، بألوان علمنا</p>
+    <a href="#shop" class="btn btn-hero" data-i18n="heroCta">تسوق الآن</a>
+  </div>
+</section>
+
+<section class="quote-section">
+  <div id="quoteBanner" class="quote-banner"></div>
+</section>
+
+<section class="shop" id="shop">
+  <div id="productGrid" class="product-grid"></div>
+</section>
+
+<section class="story" id="story">
+  <div class="story-head">
+    <div class="story-rule"><span class="story-diamond"></span><span class="story-line"></span></div>
+    <h2 data-i18n="storyTitle">قصتنا</h2>
+    <p data-i18n-html="storyBody">حطينا الشام كلها بلوحة واحدة: <b>طربوش</b>، <b>ناعورة حماة</b>، <b>حلاوة جبن</b>، وخارطة ما بتنسى حدودها. كل قطعة مقصوصة ولزّقناها بإيدنا.</p>
+  </div>
+
+  <div class="story-board">
+    <div class="story-photo p-map">
+      <img src="assets/story-map.png" alt="Map of Syria" loading="lazy">
+      <span class="story-tag" data-i18n="storyTagMap">خارطة الشام</span>
+    </div>
+    <div class="story-photo p-noria">
+      <img src="assets/story-noria.png" alt="Hama Noria" loading="lazy">
+      <span class="story-tag" data-i18n="storyTagNoria">نواعير حماة</span>
+    </div>
+    <div class="story-photo p-sweets">
+      <img src="assets/story-sweets.png" alt="Halawet El Jibn" loading="lazy">
+      <span class="story-tag" data-i18n="storyTagSweets">حلاوة الجبن</span>
+    </div>
+    <div class="story-photo p-fez">
+      <img src="assets/story-fez.png" alt="Tarboosh" loading="lazy">
+      <span class="story-tag" data-i18n="storyTagFez">الطربوش</span>
+    </div>
+
+    <div class="story-sign" data-i18n="heroTitle">لبس بيحكي حكايتنا</div>
+
+    <div class="story-stamp">
+      <div class="story-flagbar"><span class="g"></span><span class="w"></span><span class="b"></span></div>
+      <span class="story-stamp-stars">★ ★ ★</span>
+      <span class="story-stamp-txt" data-i18n="storyStampCountry">سوريا</span>
+      <span class="story-stamp-val">MM PRAN</span>
+    </div>
+
+    <div class="story-stars3 stars-a" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="#c8102e"><path d="M12 1l3 7h7l-5.5 4.5L18 20l-6-4-6 4 1.5-7.5L2 8h7z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#c8102e"><path d="M12 1l3 7h7l-5.5 4.5L18 20l-6-4-6 4 1.5-7.5L2 8h7z"/></svg>
+      <svg viewBox="0 0 24 24" fill="#c8102e"><path d="M12 1l3 7h7l-5.5 4.5L18 20l-6-4-6 4 1.5-7.5L2 8h7z"/></svg>
+    </div>
+    <div class="story-stars3 stars-b" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="#b8933f"><path d="M12 1l3 7h7l-5.5 4.5L18 20l-6-4-6 4 1.5-7.5L2 8h7z"/></svg>
+    </div>
+  </div>
+
+  <div class="story-cta-row">
+    <a href="#shop" class="story-ghost-btn" data-i18n="storyCta">اكتشف المجموعة</a>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <h2 data-i18n="contactTitle">تواصل معنا</h2>
+  <p data-i18n="contactBody">للاستفسار أو الطلب المباشر تواصلوا معنا عبر واتساب.</p>
+  <a href="#" id="contactWhatsappBtn" class="btn btn-whatsapp" target="_blank" rel="noopener" data-i18n="contactWhatsappBtn">راسلنا على واتساب</a>
+</section>
+
+<footer class="site-footer">
+  <div class="brand" id="footerLogo"></div>
+  <p>MM PRAN &copy; <span id="year"></span> — <span data-i18n="footerRights">جميع الحقوق محفوظة</span> <button type="button" id="ownerAccessBtn" class="owner-access-btn" aria-label="owner">⋯</button></p>
+</footer>
+
+<!-- Cart Drawer -->
+<div id="overlay" class="overlay"></div>
+<aside id="cartDrawer" class="cart-drawer">
+  <div class="cart-drawer-header">
+    <h2 data-i18n="cartTitle">سلة المشتريات</h2>
+    <button type="button" id="cartClose" class="icon-btn">✕</button>
+  </div>
+  <div id="cartItems" class="cart-items"></div>
+  <div class="cart-drawer-footer">
+    <div class="cart-total-row">
+      <span data-i18n="subtotal">المجموع</span>
+      <strong id="cartSubtotal">0 ر.س</strong>
+    </div>
+    <button type="button" id="checkoutBtn" class="btn btn-checkout" disabled data-i18n="checkoutBtn">إتمام الطلب عبر واتساب</button>
+    <button type="button" id="clearCartBtn" class="btn btn-text" data-i18n="clearCart">تفريغ السلة</button>
+  </div>
+</aside>
+
+<!-- Product Detail -->
+<div id="detailModal" class="modal">
+  <div class="modal-box detail-box">
+    <button type="button" id="detailClose" class="icon-btn detail-close">✕</button>
+    <div id="detailContent" class="detail-content"></div>
+  </div>
+</div>
+
+<!-- Checkout Modal -->
+<div id="checkoutModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 data-i18n="modalTitle">معلومات التوصيل</h2>
+      <button type="button" id="checkoutClose" class="icon-btn">✕</button>
+    </div>
+    <form id="checkoutForm">
+      <label>
+        <span data-i18n="nameLabel">الاسم الكامل</span>
+        <input type="text" id="custName" required>
+      </label>
+      <label>
+        <span data-i18n="phoneLabel">رقم الهاتف</span>
+        <input type="tel" id="custPhone" required>
+      </label>
+      <label>
+        <span data-i18n="countryLabel">الدولة</span>
+        <select id="custCountry">
+          <option value="🇸🇦 Saudi Arabia — السعودية" selected>🇸🇦 Saudi Arabia — السعودية</option>
+          <option value="🇦🇪 United Arab Emirates — الإمارات">🇦🇪 United Arab Emirates — الإمارات</option>
+          <option value="🇰🇼 Kuwait — الكويت">🇰🇼 Kuwait — الكويت</option>
+          <option value="🇶🇦 Qatar — قطر">🇶🇦 Qatar — قطر</option>
+          <option value="🇧🇭 Bahrain — البحرين">🇧🇭 Bahrain — البحرين</option>
+          <option value="🇴🇲 Oman — عُمان">🇴🇲 Oman — عُمان</option>
+          <option value="🇸🇾 Syria — سوريا">🇸🇾 Syria — سوريا</option>
+          <option value="🇱🇧 Lebanon — لبنان">🇱🇧 Lebanon — لبنان</option>
+          <option value="🇯🇴 Jordan — الأردن">🇯🇴 Jordan — الأردن</option>
+          <option value="🇮🇶 Iraq — العراق">🇮🇶 Iraq — العراق</option>
+          <option value="🇵🇸 Palestine — فلسطين">🇵🇸 Palestine — فلسطين</option>
+          <option value="🇪🇬 Egypt — مصر">🇪🇬 Egypt — مصر</option>
+          <option value="🇱🇾 Libya — ليبيا">🇱🇾 Libya — ليبيا</option>
+          <option value="🇹🇳 Tunisia — تونس">🇹🇳 Tunisia — تونس</option>
+          <option value="🇩🇿 Algeria — الجزائر">🇩🇿 Algeria — الجزائر</option>
+          <option value="🇲🇦 Morocco — المغرب">🇲🇦 Morocco — المغرب</option>
+          <option value="🇸🇩 Sudan — السودان">🇸🇩 Sudan — السودان</option>
+          <option value="🇾🇪 Yemen — اليمن">🇾🇪 Yemen — اليمن</option>
+          <option value="🇹🇷 Turkey — تركيا">🇹🇷 Turkey — تركيا</option>
+          <option value="🇩🇪 Germany — ألمانيا">🇩🇪 Germany — ألمانيا</option>
+          <option value="🇸🇪 Sweden — السويد">🇸🇪 Sweden — السويد</option>
+          <option value="🇳🇱 Netherlands — هولندا">🇳🇱 Netherlands — هولندا</option>
+          <option value="🇫🇷 France — فرنسا">🇫🇷 France — فرنسا</option>
+          <option value="🇬🇧 United Kingdom — بريطانيا">🇬🇧 United Kingdom — بريطانيا</option>
+          <option value="🇺🇸 United States — أمريكا">🇺🇸 United States — أمريكا</option>
+          <option value="🇨🇦 Canada — كندا">🇨🇦 Canada — كندا</option>
+          <option value="🇦🇺 Australia — أستراليا">🇦🇺 Australia — أستراليا</option>
+        </select>
+      </label>
+      <label>
+        <span data-i18n="addressLabel">المدينة / العنوان</span>
+        <input type="text" id="custAddress">
+      </label>
+      <label>
+        <span data-i18n="notesLabel">ملاحظات (اختياري)</span>
+        <textarea id="custNotes" rows="2"></textarea>
+      </label>
+      <p class="required-note" data-i18n="requiredNote">* الاسم ورقم الهاتف مطلوبان</p>
+      <button type="submit" class="btn btn-checkout" data-i18n="sendWhatsapp">إرسال الطلب على واتساب</button>
+    </form>
+  </div>
+</div>
+
+<!-- PIN gate for the owner-only Control Desk -->
+<div id="pinGateModal" class="modal">
+  <div class="modal-box pin-gate-box">
+    <div class="modal-header">
+      <h2 data-i18n="pinGateTitle">دخول صاحبة المتجر</h2>
+      <button type="button" id="pinGateClose" class="icon-btn">✕</button>
+    </div>
+    <form id="pinGateForm">
+      <label>
+        <span data-i18n="pinGateLabel">الرمز السري</span>
+        <input type="password" id="pinGateInput" autocomplete="off">
+      </label>
+      <p id="pinGateError" class="pin-gate-error" hidden data-i18n="pinGateError">رمز غير صحيح</p>
+      <button type="submit" class="btn btn-checkout" data-i18n="pinGateSubmit">دخول</button>
+    </form>
+  </div>
+</div>
+
+</div><!-- /storefrontRoot -->
+
+<!-- Control Desk: full-page, owner-only product management -->
+<section id="adminPage" class="admin-page" hidden>
+  <div class="admin-page-inner">
+    <div class="admin-page-header">
+      <h1 data-i18n="adminTitle">لوحة التحكم — إضافة قطعة</h1>
+      <a href="#" id="adminBackLink" class="admin-back-link" data-i18n="adminBackLink">→ رجوع للمتجر</a>
+    </div>
+    <p class="admin-intro" data-i18n="adminIntro">
+      عبّي بيانات القطعة، ضيفي الصور، واضغطي "حفظ بالمتجر" — بتنحفظ وبتنشر مباشرة لكل الزوار.
+    </p>
+    <div class="admin-layout">
+      <div class="admin-form">
+        <label>
+          <span data-i18n="admEditLabel">تعديل قطعة موجودة (اختياري)</span>
+          <select id="admEditSelect">
+            <option value="" data-i18n="admNewItem">➕ قطعة جديدة</option>
+          </select>
+        </label>
+        <div class="admin-row">
+          <label>
+            <span data-i18n="admNameArLabel">الاسم (عربي)</span>
+            <input type="text" id="admNameAr" placeholder="مثال: سوريا كلاسيك">
+          </label>
+          <label>
+            <span data-i18n="admNameEnLabel">Name (English)</span>
+            <input type="text" id="admNameEn" placeholder="e.g. Syria Classic Tee">
+          </label>
+        </div>
+        <label>
+          <span data-i18n="admPriceLabel">السعر (ر.س)</span>
+          <input type="number" id="admPrice" min="0" step="1" value="75">
+        </label>
+        <fieldset class="admin-colors">
+          <legend data-i18n="admColorsLabel">الألوان المتوفرة</legend>
+          <label><input type="checkbox" value="black" checked> <span class="swatch swatch-black"></span></label>
+          <label><input type="checkbox" value="white" checked> <span class="swatch swatch-white"></span></label>
+          <label><input type="checkbox" value="pink" checked> <span class="swatch swatch-pink"></span></label>
+        </fieldset>
+        <fieldset class="admin-sizes">
+          <legend data-i18n="admSizesLabel">المقاسات والكمية المتوفرة</legend>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="XS" checked> XS</label>
+            <input type="number" class="size-stock" data-size="XS" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="S" checked> S</label>
+            <input type="number" class="size-stock" data-size="S" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="M" checked> M</label>
+            <input type="number" class="size-stock" data-size="M" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="L" checked> L</label>
+            <input type="number" class="size-stock" data-size="L" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="XL" checked> XL</label>
+            <input type="number" class="size-stock" data-size="XL" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="XXL" checked> XXL</label>
+            <input type="number" class="size-stock" data-size="XXL" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="3XL" checked> 3XL</label>
+            <input type="number" class="size-stock" data-size="3XL" min="0" value="10">
+          </div>
+          <div class="admin-size-row">
+            <label><input type="checkbox" class="size-check" value="4XL" checked> 4XL</label>
+            <input type="number" class="size-stock" data-size="4XL" min="0" value="10">
+          </div>
+        </fieldset>
+        <label>
+          <span data-i18n="admPhotosLabel">صور القطعة (حتى 7 صور)</span>
+          <input type="file" id="admPhotos" accept="image/*" multiple>
+        </label>
+        <p class="admin-photos-note" data-i18n="admPhotosNote">بعد توليد الكود، ابعتيلنا هالصور مباشرة بالشات وربطها بالمنتج.</p>
+        <div class="admin-photo-thumbs" id="admPhotoThumbs"></div>
+        <div class="admin-row">
+          <label>
+            <span data-i18n="admDescArLabel">الوصف (عربي)</span>
+            <textarea id="admDescAr" rows="2"></textarea>
+          </label>
+          <label>
+            <span data-i18n="admDescEnLabel">Description (English)</span>
+            <textarea id="admDescEn" rows="2"></textarea>
+          </label>
+        </div>
+      </div>
+      <div class="admin-preview">
+        <div id="admPreviewArt" class="admin-preview-art"></div>
+        <div class="admin-preview-swatches" id="admPreviewSwatches"></div>
+      </div>
+    </div>
+    <div class="admin-actions">
+      <button type="button" id="admSave" class="btn btn-checkout" data-i18n="admSaveBtn">حفظ بالمتجر</button>
+      <button type="button" id="admDelete" class="btn btn-delete" hidden data-i18n="admDeleteBtn">حذف القطعة</button>
+    </div>
+    <p id="admSaveStatus" class="admin-save-status" hidden></p>
+  </div>
+</section>
+
+<script src="js/products.js"></script>
+<script src="js/artwork.js"></script>
+<script src="js/app.js"></script>
+<script>
+  document.getElementById("brandLogo").innerHTML = logoSVG();
+  document.getElementById("footerLogo").innerHTML = logoSVG();
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+</body>
+</html>
