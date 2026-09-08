@@ -9,6 +9,12 @@ const CONFIG = {
   ADMIN_PIN: "SYRIA1946"
 };
 
+const COLOR_NAMES = {
+  black: { ar: "أسود", en: "Black" },
+  white: { ar: "أبيض", en: "White" },
+  pink: { ar: "وردي", en: "Pink" }
+};
+
 // Opens an external URL (WhatsApp, etc.) via a real link click rather than window.open() —
 // when this page runs inside a sandboxed viewer, only genuine <a href> clicks are allowed
 // to navigate out; a script-triggered window.open() is silently blocked there.
@@ -520,22 +526,25 @@ document.getElementById("checkoutForm").addEventListener("submit", (e) => {
   const notes = document.getElementById("custNotes").value.trim();
   if (!name || !phone) return;
 
-  const lines = cart.map(i =>
-    `- ${i.name.ar} / ${i.name.en} | ${t("colorLabel")}: ${i.color} | ${t("sizeLabel")}: ${i.size} | x${i.qty} = ${priceText(i.price * i.qty)}`
-  ).join("\n");
+  const itemLines = cart.map(i => {
+    const colorName = (COLOR_NAMES[i.color] && COLOR_NAMES[i.color][lang]) || i.color;
+    const displayName = lang === "ar" ? i.name.ar : i.name.en;
+    // Skip repeating the color if it's already spelled out in the product name
+    // (e.g. products split by color, like "Syrian T-shirt — Pink").
+    const nameHasColor = displayName.includes(colorName);
+    const price = priceText(i.price * i.qty);
+    return lang === "ar"
+      ? `• ${displayName} — ${nameHasColor ? "" : `لون ${colorName}، `}مقاس ${i.size}، الكمية ${i.qty} (${price})`
+      : `• ${displayName} — ${nameHasColor ? "" : `${colorName} color, `}size ${i.size}, qty ${i.qty} (${price})`;
+  }).join("\n");
 
-  const message =
-`طلب جديد من موقع Syrian Style
-------------------------
-${lines}
-------------------------
-${t("subtotal")}: ${priceText(cartTotal())}
+  const greeting = lang === "ar"
+    ? "مرحباً 👋 حابب اطلب من متجر Syrian Style:"
+    : "Hi 👋 I'd like to order from Syrian Style:";
+  const deliveryLabel = lang === "ar" ? "بيانات التوصيل" : "Delivery details";
 
-${t("nameLabel")}: ${name}
-${t("phoneLabel")}: ${phone}
-${t("countryLabel")}: ${country}
-${t("addressLabel")}: ${address || "-"}
-${t("notesLabel")}: ${notes || "-"}`;
+  let message = `${greeting}\n\n${itemLines}\n\n${t("subtotal")}: ${priceText(cartTotal())}\n\n${deliveryLabel}:\n${t("nameLabel")}: ${name}\n${t("phoneLabel")}: ${phone}\n${t("countryLabel")}: ${country}\n${t("addressLabel")}: ${address || "-"}`;
+  if (notes) message += `\n${t("notesLabel")}: ${notes}`;
 
   const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   openExternalLink(url);
