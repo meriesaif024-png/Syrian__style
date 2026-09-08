@@ -14,7 +14,7 @@
 
 <header class="site-header">
   <div class="header-inner">
-    <a href="#home" class="brand" id="brandLogo"></a>
+    <a href="#home" class="brand"><img src="assets/logo.png" alt="Syrian Style"></a>
     <nav class="main-nav">
       <a href="#home" data-i18n="navHome">الرئيسية</a>
       <a href="#shop" data-i18n="navShop">المتجر</a>
@@ -102,7 +102,7 @@
 </section>
 
 <footer class="site-footer">
-  <div class="brand" id="footerLogo"></div>
+  <div class="brand"><img src="assets/logo.png" alt="Syrian Style"></div>
   <p>Syrian Style &copy; <span id="year"></span> — <span data-i18n="footerRights">جميع الحقوق محفوظة</span> <button type="button" id="ownerAccessBtn" class="owner-access-btn" aria-label="owner">⋯</button></p>
 </footer>
 
@@ -321,8 +321,6 @@
 <script src="js/artwork.js"></script>
 <script src="js/app.js"></script>
 <script>
-  document.getElementById("brandLogo").innerHTML = logoSVG();
-  document.getElementById("footerLogo").innerHTML = logoSVG();
   document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 </body>

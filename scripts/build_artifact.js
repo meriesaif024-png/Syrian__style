@@ -22,6 +22,7 @@ const imgMap = b64('story-map.png', 'image/png');
 const imgFez = b64('story-fez.png', 'image/png');
 const imgNoria = b64('story-noria.png', 'image/png');
 const imgSweets = b64('story-sweets.png', 'image/png');
+const imgLogo = b64('logo.png', 'image/png');
 
 let html = fs.readFileSync(path.join(proj, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(proj, 'css', 'styles.css'), 'utf8');
@@ -34,7 +35,8 @@ html = html
   .replace('assets/story-map.png', imgMap)
   .replace('assets/story-noria.png', imgNoria)
   .replace('assets/story-sweets.png', imgSweets)
-  .replace('assets/story-fez.png', imgFez);
+  .replace('assets/story-fez.png', imgFez)
+  .replaceAll('assets/logo.png', imgLogo);
 
 // Extract the <head> extras (title/fonts) and the <body> content between <body> and the first <script src=...>.
 const headMatch = html.match(/<title>[\s\S]*?<link rel="stylesheet" href="css\/styles\.css">/);
@@ -46,7 +48,7 @@ const titleAndFonts = headMatch[0].replace(
   `<style>\n${css}\n</style>`
 );
 
-const out = `${titleAndFonts}\n${bodyContent}\n\n<script>\n${productsJs}\n${artworkJs}\n${appJs}\n\ndocument.getElementById("brandLogo").innerHTML = logoSVG();\ndocument.getElementById("footerLogo").innerHTML = logoSVG();\ndocument.getElementById("year").textContent = new Date().getFullYear();\n</script>\n`;
+const out = `${titleAndFonts}\n${bodyContent}\n\n<script>\n${productsJs}\n${artworkJs}\n${appJs}\n\ndocument.getElementById("year").textContent = new Date().getFullYear();\n</script>\n`;
 
 fs.mkdirSync(outDir, { recursive: true });
 fs.writeFileSync(outPath, out, 'utf8');
