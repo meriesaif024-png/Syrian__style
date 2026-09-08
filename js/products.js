@@ -3,7 +3,7 @@
 // with an updated product list (see app.js, buildPublishHtml()).
 const PAGE_TEMPLATE = document.documentElement.outerHTML;
 
-// Product catalog for MM PRAN — t-shirts only.
+// Product catalog for Syrian Style — t-shirts only.
 // Each product needs: id, category ("tshirt"), typeLabel, name, price,
 // colors (from js/artwork.js GARMENT_COLORS: black, white, pink),
 // sizes (array of { size, stock }), optional images (data URIs, up to 7), and desc.

@@ -1,16 +1,20 @@
-# MM PRAN
+# Syrian Style
 
-A storefront for the MM PRAN Syrian clothing brand. No backend, no payment gateway — checkout builds an order summary and opens it as a WhatsApp message.
+A storefront for the Syrian Style clothing brand. No backend, no payment gateway — checkout builds an order summary and opens it as a WhatsApp message.
 
-**This repo is a code backup, not the live site.** The actual public store runs as a
-[Claude Artifact](https://claude.ai/code/artifact/8c391c2e-0cb2-4e72-92ca-501a1853ca7c),
-which is what makes the owner-only Control Desk able to save product changes live with
-no server of its own (the Artifact republishes itself). That self-save feature only works
-inside the Artifact runtime, so editing products day-to-day should go through the live
-link's Control Desk (the small `⋯` button in the footer, PIN-gated), not through this repo.
+**Two live copies of this site exist, for two different jobs:**
 
-Use this repo to: keep a version history, review/change code (layout, copy, features),
-and rebuild the single-file version to publish as a new Artifact version after code changes.
+- **Public customer site:** https://meriesaif024-png.github.io/Syrian__style/ — this repo's
+  `main` branch, served directly by GitHub Pages. This is the link to share with customers.
+- **Private editing tool:** [Claude Artifact](https://claude.ai/code/artifact/8c391c2e-0cb2-4e72-92ca-501a1853ca7c) —
+  kept private (owner-only), used only for its self-publishing Control Desk (the small `⋯`
+  button in the footer, PIN-gated), since that's the only place "Save to Store" actually
+  works (the Artifact republishes itself; a static host like GitHub Pages has no server to
+  save to).
+
+**Workflow:** add/edit/delete products through the Control Desk on the Claude Artifact link.
+When done, sync the resulting `js/products.js` into this repo and push — GitHub Pages picks
+it up within a minute or two. This repo is not otherwise kept in sync automatically.
 
 ## Run it locally
 

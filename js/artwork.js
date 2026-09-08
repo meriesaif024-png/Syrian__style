@@ -42,7 +42,7 @@ function logoSVG() {
   const stars = [starPath(50, 20, 4.2), starPath(64, 20, 4.2), starPath(78, 20, 4.2)]
     .map(d => `<path d="${d}" fill="#c8102e"/>`).join("");
   return `
-  <svg viewBox="0 0 128 62" xmlns="http://www.w3.org/2000/svg" class="brand-mark" role="img" aria-label="MM PRAN">
+  <svg viewBox="0 0 128 62" xmlns="http://www.w3.org/2000/svg" class="brand-mark" role="img" aria-label="Syrian Style">
     <g>
       <rect x="0" y="0" width="128" height="40" rx="6" fill="#0f6b34"/>
       <rect x="0" y="13.3" width="128" height="13.3" fill="#f5f0e6"/>
@@ -51,7 +51,7 @@ function logoSVG() {
       ${stars}
     </g>
     <text x="64" y="53" text-anchor="middle" font-family="'El Messiri', sans-serif" font-weight="700"
-      font-size="11" fill="currentColor" letter-spacing="2">MM PRAN</text>
+      font-size="9.5" fill="currentColor" letter-spacing="1">SYRIAN STYLE</text>
   </svg>`;
 }
 
