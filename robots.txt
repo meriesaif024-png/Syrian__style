@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://meriesaif024-png.github.io/Syrian__style/sitemap.xml
