@@ -64,7 +64,8 @@ const I18N = {
     admSaveConflict: "صار حفظ من مكان تاني بنفس الوقت، جربي تحفظي مرة ثانية.",
     admSaveError: "صار خطأ أثناء الحفظ، جربي مرة ثانية.",
     admDeleteBtn: "حذف القطعة", admConfirmDelete: "اضغطي تاني للتأكيد", admDeleting: "جارِ الحذف...",
-    admDeleted: "تم الحذف ✓ رح يتحدّث الموقع هلق"
+    admDeleted: "تم الحذف ✓ رح يتحدّث الموقع هلق",
+    inAppBrowserWarning: "⚠ لأفضل تجربة (وحتى يفتح واتساب صح)، افتحي هاد الرابط من متصفحك مباشرة: اضغطي ⋯ أو ⋮ فوق، وبعدين \"فتح في المتصفح\"."
   },
   en: {
     navHome: "Home", navShop: "Shop", navStory: "Our Story", navContact: "Contact",
@@ -101,7 +102,8 @@ const I18N = {
     admSaveConflict: "Someone else saved changes at the same time — please try saving again.",
     admSaveError: "Something went wrong while saving. Please try again.",
     admDeleteBtn: "Delete Item", admConfirmDelete: "Tap again to confirm",
-    admDeleting: "Deleting...", admDeleted: "Deleted ✓ — the page will update now"
+    admDeleting: "Deleting...", admDeleted: "Deleted ✓ — the page will update now",
+    inAppBrowserWarning: "⚠ For the best experience (and so WhatsApp opens correctly), open this link in your phone's browser: tap ⋯ or ⋮ above, then \"Open in Browser\"."
   }
 };
 
@@ -929,6 +931,23 @@ document.getElementById("admDelete").addEventListener("click", async () => {
     else showStatus(t("admSaveError"));
   }
 });
+
+// ---- In-app browser warning ----
+// TikTok/Instagram/Facebook/etc.'s built-in browsers block navigating out to
+// WhatsApp entirely (their own restriction, not something a site can bypass) —
+// the only real fix is opening the link in a real browser, so point that out.
+function isInAppBrowser() {
+  const ua = navigator.userAgent || "";
+  return /musical_ly|bytedancewebview|tiktok|instagram|fban|fbav|line\/|micromessenger|snapchat/i.test(ua);
+}
+if (isInAppBrowser() && !sessionStorage.getItem("mmpran_inapp_dismissed")) {
+  const banner = document.getElementById("inAppBrowserBanner");
+  banner.hidden = false;
+  document.getElementById("inAppBrowserDismiss").addEventListener("click", () => {
+    banner.hidden = true;
+    sessionStorage.setItem("mmpran_inapp_dismissed", "1");
+  });
+}
 
 // ---- Init ----
 document.getElementById("contactWhatsappBtn").href =
