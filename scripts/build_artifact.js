@@ -18,7 +18,9 @@ function b64(file, mime) {
   return `data:${mime};base64,${buf.toString('base64')}`;
 }
 
-let html = fs.readFileSync(path.join(proj, 'index.html'), 'utf8');
+// Strip ?v=... cache-busting suffixes (only needed for GitHub Pages) before inlining.
+let html = fs.readFileSync(path.join(proj, 'index.html'), 'utf8')
+  .replace(/((?:src|href)="(?:assets|css|js)\/[^"?]+)\?v=[^"]*"/g, '$1"');
 const css = fs.readFileSync(path.join(proj, 'css', 'styles.css'), 'utf8');
 const productsJs = fs.readFileSync(path.join(proj, 'js', 'products.js'), 'utf8');
 const artworkJs = fs.readFileSync(path.join(proj, 'js', 'artwork.js'), 'utf8');
