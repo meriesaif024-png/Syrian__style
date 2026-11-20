@@ -18,12 +18,6 @@ function b64(file, mime) {
   return `data:${mime};base64,${buf.toString('base64')}`;
 }
 
-const imgMap = b64('story-map.png', 'image/png');
-const imgFez = b64('story-fez.png', 'image/png');
-const imgNoria = b64('story-noria.png', 'image/png');
-const imgSweets = b64('story-sweets.png', 'image/png');
-const imgLogo = b64('logo.png', 'image/png');
-
 let html = fs.readFileSync(path.join(proj, 'index.html'), 'utf8');
 const css = fs.readFileSync(path.join(proj, 'css', 'styles.css'), 'utf8');
 const productsJs = fs.readFileSync(path.join(proj, 'js', 'products.js'), 'utf8');
@@ -31,12 +25,10 @@ const artworkJs = fs.readFileSync(path.join(proj, 'js', 'artwork.js'), 'utf8');
 const appJs = fs.readFileSync(path.join(proj, 'js', 'app.js'), 'utf8');
 
 // Swap local relative image paths for embedded data URIs (artifact has no filesystem access).
-html = html
-  .replace('assets/story-map.png', imgMap)
-  .replace('assets/story-noria.png', imgNoria)
-  .replace('assets/story-sweets.png', imgSweets)
-  .replace('assets/story-fez.png', imgFez)
-  .replaceAll('assets/logo.png', imgLogo);
+// Only src/href attributes are swapped, so absolute URLs in <meta> tags stay as real URLs.
+const mimes = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', webp: 'image/webp' };
+html = html.replace(/(src|href)="assets\/([\w.-]+\.(png|jpe?g|webp))"/g,
+  (m, attr, file, ext) => `${attr}="${b64(file, mimes[ext.toLowerCase()])}"`);
 
 // Extract the <head> extras (title/fonts) and the <body> content between <body> and the first <script src=...>.
 const headMatch = html.match(/<title>[\s\S]*?<link rel="stylesheet" href="css\/styles\.css">/);
