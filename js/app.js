@@ -111,10 +111,10 @@ const QUOTES = [
   { ar: "يا شآم، يا شآم! هل غير جرحكِ يشغلني؟", en: "“Oh Damascus, is there any wound but yours that occupies me?”", by: "نزار قباني — Nizar Qabbani" },
   { ar: "الحرية ما بتنعطى، الحرية بتنشتق", en: "“Freedom isn't given, it's earned.”", by: "مثل سوري — Syrian proverb" },
   { ar: "بلادي وإن جارت علي عزيزة", en: "“My homeland, even unkind, remains dear to me.”", by: "قول مأثور — Traditional saying" },
-  { ar: "من الشام لأبعد نقطة، الجذور ما بتتقلع", en: "“From Damascus to the farthest point, roots don't pull out.”", by: "Syrian Style" },
+  { ar: "من الشام لأبعد نقطة، الجذور ما بتتقلع", en: "“From Damascus to the farthest point, roots don't pull out.”", by: "Root of Syria" },
   { ar: "دمشق، يا بيت الأجداد", en: "“Damascus, house of our forefathers.”", by: "قول شعبي — Popular saying" },
   { ar: "ما حدا بيعرف قيمة الوطن غير يلي غاب عنه", en: "“No one knows the worth of a homeland like the one who has been away from it.”", by: "مثل سوري — Syrian proverb" },
-  { ar: "تحت الرماد جمر، وسوريا ما بتموت", en: "“Under the ashes, embers remain — Syria does not die.”", by: "Syrian Style" },
+  { ar: "تحت الرماد جمر، وسوريا ما بتموت", en: "“Under the ashes, embers remain — Syria does not die.”", by: "Root of Syria" },
   { ar: "ياريتني نجمة بالعلم، أضل فوق حبيبي الشام", en: "“I wish I were a star on the flag, forever above beloved Damascus.”", by: "قول شعبي — Popular saying" }
 ];
 
@@ -541,8 +541,8 @@ document.getElementById("checkoutForm").addEventListener("submit", (e) => {
   }).join("\n");
 
   const greeting = lang === "ar"
-    ? "مرحباً 👋 حابب اطلب من متجر Syrian Style:"
-    : "Hi 👋 I'd like to order from Syrian Style:";
+    ? "مرحباً 👋 حابب اطلب من متجر Root of Syria:"
+    : "Hi 👋 I'd like to order from Root of Syria:";
   const deliveryLabel = lang === "ar" ? "بيانات التوصيل" : "Delivery details";
 
   let message = `${greeting}\n\n${itemLines}\n\n${t("subtotal")}: ${priceText(cartTotal())}\n\n${deliveryLabel}:\n${t("nameLabel")}: ${name}\n${t("phoneLabel")}: ${phone}\n${t("countryLabel")}: ${country}\n${t("addressLabel")}: ${address || "-"}`;

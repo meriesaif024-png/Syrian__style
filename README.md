@@ -1,6 +1,6 @@
-# Syrian Style
+# Root of Syria
 
-A storefront for the Syrian Style clothing brand. No backend, no payment gateway — checkout builds an order summary and opens it as a WhatsApp message.
+A storefront for the Root of Syria clothing brand. No backend, no payment gateway — checkout builds an order summary and opens it as a WhatsApp message.
 
 **Two live copies of this site exist, for two different jobs:**
 
