@@ -66,7 +66,7 @@ const I18N = {
     admSaveError: "صار خطأ أثناء الحفظ، جربي مرة ثانية.",
     admDeleteBtn: "حذف القطعة", admConfirmDelete: "اضغطي تاني للتأكيد", admDeleting: "جارِ الحذف...",
     admDeleted: "تم الحذف ✓ رح يتحدّث الموقع هلق",
-    inAppBrowserWarning: "⚠ لأفضل تجربة (وحتى يفتح واتساب صح)، افتحي هاد الرابط من متصفحك مباشرة: اضغطي ⋯ أو ⋮ فوق، وبعدين \"فتح في المتصفح\"."
+    inAppBrowserWarning: "إذا علق معك، افتحه من المتصفح 🌐"
   },
   en: {
     navHome: "Home", navShop: "Shop", navStory: "Our Story", navContact: "Contact",
@@ -105,7 +105,7 @@ const I18N = {
     admSaveError: "Something went wrong while saving. Please try again.",
     admDeleteBtn: "Delete Item", admConfirmDelete: "Tap again to confirm",
     admDeleting: "Deleting...", admDeleted: "Deleted ✓ — the page will update now",
-    inAppBrowserWarning: "⚠ For the best experience (and so WhatsApp opens correctly), open this link in your phone's browser: tap ⋯ or ⋮ above, then \"Open in Browser\"."
+    inAppBrowserWarning: "If it gets stuck, just open it in your browser 🌐"
   }
 };
 

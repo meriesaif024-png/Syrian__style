@@ -38,17 +38,18 @@ img, svg { display: block; max-width: 100%; }
 
 /* ---------- In-app browser warning ---------- */
 .in-app-banner {
-  background: #fff3cd; color: #6b5100; text-align: center;
-  padding: 10px 40px 10px 16px; font-size: .82rem; font-weight: 700;
+  background: var(--green); color: #fff; text-align: center;
+  border-bottom: 1px solid var(--green-deep);
+  padding: 8px 40px 8px 16px; font-size: .82rem; font-weight: 600;
   position: relative; line-height: 1.5;
 }
 .in-app-banner[hidden] { display: none; }
 .in-app-banner-close {
   position: absolute; top: 6px; inset-inline-end: 10px;
-  background: none; border: none; color: #6b5100; font-size: .95rem;
+  background: none; border: none; color: #fff; font-size: .95rem;
   width: 26px; height: 26px; border-radius: 50%;
 }
-.in-app-banner-close:hover { background: rgba(0,0,0,.08); }
+.in-app-banner-close:hover { background: rgba(255,255,255,.18); }
 
 /* ---------- Header ---------- */
 .site-header {
