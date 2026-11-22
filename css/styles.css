@@ -504,6 +504,19 @@ img, svg { display: block; max-width: 100%; }
 .admin-back-link { font-weight: 700; color: var(--green); font-size: .9rem; white-space: nowrap; padding-top: 8px; }
 .admin-back-link:hover { color: var(--green-deep); }
 .admin-intro { font-size: .85rem; color: var(--muted); margin: 0 0 16px; }
+.admin-gh { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; margin: 0 0 18px; background: var(--cream); }
+.admin-gh[hidden] { display: none; }
+.admin-gh-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.admin-gh-status { font-size: .85rem; font-weight: 700; color: var(--muted); }
+.admin-gh-status.ok { color: var(--green); }
+.admin-gh-toggle { color: var(--ink); text-decoration: underline; padding: 4px; }
+.admin-gh-form { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.admin-gh-form[hidden] { display: none; }
+.admin-gh-help { font-size: .82rem; color: var(--ink); margin: 0; line-height: 1.8; }
+.admin-gh-help a { color: var(--green); text-decoration: underline; }
+.admin-gh-input-row { display: flex; gap: 8px; }
+.admin-gh-input-row input { flex: 1; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 11px; font-family: monospace; font-size: .85rem; min-width: 0; }
+.admin-gh-input-row .btn-checkout { width: auto; padding: 9px 16px; white-space: nowrap; }
 .admin-layout { display: flex; gap: 24px; flex-wrap: wrap; }
 .admin-form { flex: 1 1 340px; display: flex; flex-direction: column; gap: 12px; }
 .admin-form label { display: flex; flex-direction: column; gap: 6px; font-size: .85rem; font-weight: 700; }

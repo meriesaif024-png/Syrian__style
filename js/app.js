@@ -6,7 +6,10 @@ const CONFIG = {
   // Gate for the owner-only Control Desk page (the small "..." button in the footer).
   // Not real security — anyone who reads the page source can see it — but it keeps
   // casual visitors from finding or opening it. Change it any time by asking to update it.
-  ADMIN_PIN: "SYRIA1946"
+  ADMIN_PIN: "SYRIA1946",
+  // Where the Control Desk saves the catalog when running on GitHub Pages.
+  GITHUB_REPO: "meriesaif024-png/Syrian__style",
+  GITHUB_BRANCH: "main"
 };
 
 const COLOR_NAMES = {
@@ -66,6 +69,17 @@ const I18N = {
     admSaveError: "صار خطأ أثناء الحفظ، جربي مرة ثانية.",
     admDeleteBtn: "حذف القطعة", admConfirmDelete: "اضغطي تاني للتأكيد", admDeleting: "جارِ الحذف...",
     admDeleted: "تم الحذف ✓ رح يتحدّث الموقع هلق",
+    admSavedGh: "تم الحفظ ✓ رح يبين بالموقع خلال دقيقة أو دقيقتين.",
+    admDeletedGh: "تم الحذف ✓ رح يختفي من الموقع خلال دقيقة أو دقيقتين.",
+    admNeedToken: "لازم تربطي الحفظ بـ GitHub أول مرة — الصقي المفتاح فوق وبعدين احفظي.",
+    admBadToken: "المفتاح مو شغّال أو ما عنده صلاحية كتابة. تأكدي منه وجربي مرة ثانية.",
+    admGhConnected: "✓ الحفظ مربوط بـ GitHub",
+    admGhNotConnected: "الحفظ مو مربوط لسا",
+    admGhConnectBtn: "ربط الحفظ",
+    admGhChangeBtn: "تغيير المفتاح",
+    admGhSaveBtn: "حفظ المفتاح",
+    admGhChecking: "جارِ التأكد...",
+    admGhHelp: "لمرة وحدة بس: افتحي <a href=\"https://github.com/settings/personal-access-tokens/new\" target=\"_blank\" rel=\"noopener\">صفحة إنشاء مفتاح على GitHub</a>، بـ <b>Repository access</b> اختاري <b>Only select repositories</b> ← <b>Syrian__style</b>، وبـ <b>Permissions</b> ← <b>Contents</b> اختاري <b>Read and write</b>. اضغطي Generate، انسخي المفتاح والصقيه هون. المفتاح بينحفظ على هاد الجهاز بس.",
     inAppBrowserWarning: "إذا علق معك، افتحه من المتصفح 🌐"
   },
   en: {
@@ -105,6 +119,17 @@ const I18N = {
     admSaveError: "Something went wrong while saving. Please try again.",
     admDeleteBtn: "Delete Item", admConfirmDelete: "Tap again to confirm",
     admDeleting: "Deleting...", admDeleted: "Deleted ✓ — the page will update now",
+    admSavedGh: "Saved ✓ — it will show on the site within a minute or two.",
+    admDeletedGh: "Deleted ✓ — it will disappear from the site within a minute or two.",
+    admNeedToken: "Connect saving to GitHub first — paste your key above, then save again.",
+    admBadToken: "That key doesn't work or can't write to the store. Check it and try again.",
+    admGhConnected: "✓ Saving is connected to GitHub",
+    admGhNotConnected: "Saving isn't connected yet",
+    admGhConnectBtn: "Connect saving",
+    admGhChangeBtn: "Change key",
+    admGhSaveBtn: "Save key",
+    admGhChecking: "Checking...",
+    admGhHelp: "One time only: open <a href=\"https://github.com/settings/personal-access-tokens/new\" target=\"_blank\" rel=\"noopener\">GitHub's new token page</a>, under <b>Repository access</b> pick <b>Only select repositories</b> → <b>Syrian__style</b>, and under <b>Permissions</b> → <b>Contents</b> pick <b>Read and write</b>. Click Generate, copy the key and paste it here. It's stored on this device only.",
     inAppBrowserWarning: "If it gets stuck, just open it in your browser 🌐"
   }
 };
@@ -659,6 +684,7 @@ function openAdminPage() {
   adminPage.hidden = false;
   populateAdminEditOptions();
   resetAdminForm();
+  renderGhPanel();
   window.scrollTo(0, 0);
 }
 function closeAdminPage() {
@@ -817,19 +843,125 @@ function compressImage(file, maxDim, quality) {
 function buildPublishHtml() {
   const productsCode = `/*PRODUCTS_START*/\nconst PRODUCTS = ${JSON.stringify(PRODUCTS)};\n/*PRODUCTS_END*/`;
   const marker = /\/\*PRODUCTS_START\*\/[\s\S]*?\/\*PRODUCTS_END\*\//;
-  const body = PAGE_TEMPLATE.replace(marker, productsCode);
+  const body = PAGE_TEMPLATE.replace(marker, () => productsCode);
   return "<!DOCTYPE html>\n" + body;
 }
+
+// ---- Saving on GitHub Pages: commit js/products.js (+ new photos) to the repo ----
+// The owner pastes a fine-grained GitHub token once; it lives only in this
+// device's localStorage and is never part of the site's code.
+const GH_TOKEN_KEY = "ros_github_token";
+function ghToken() { try { return localStorage.getItem(GH_TOKEN_KEY) || ""; } catch (e) { return ""; } }
+function setGhToken(v) { try { v ? localStorage.setItem(GH_TOKEN_KEY, v) : localStorage.removeItem(GH_TOKEN_KEY); } catch (e) {} }
+
+async function gh(path, opts) {
+  opts = opts || {};
+  const headers = {
+    "Authorization": `Bearer ${ghToken()}`,
+    "Accept": opts.raw ? "application/vnd.github.raw+json" : "application/vnd.github+json",
+    "X-GitHub-Api-Version": "2022-11-28"
+  };
+  if (opts.body) headers["Content-Type"] = "application/json";
+  const res = await fetch(`https://api.github.com/repos/${CONFIG.GITHUB_REPO}${path}`, {
+    method: opts.method || "GET", headers, body: opts.body ? JSON.stringify(opts.body) : undefined, cache: "no-store"
+  });
+  if (!res.ok) {
+    const err = new Error(`GitHub ${res.status}`);
+    err.code = (res.status === 401 || res.status === 403 || res.status === 404) ? "bad_token"
+      : (res.status === 409 || res.status === 422) ? "conflict" : "error";
+    throw err;
+  }
+  return opts.raw ? res.text() : res.json();
+}
+
+// newImages: [{ path, dataUri }] — photos to add as files under assets/products/.
+async function saveCatalogToGitHub(newImages, message) {
+  const branch = CONFIG.GITHUB_BRANCH;
+  const ref = await gh(`/git/ref/heads/${branch}`);
+  const headSha = ref.object.sha;
+  const headCommit = await gh(`/git/commits/${headSha}`);
+  const currentJs = await gh(`/contents/js/products.js?ref=${headSha}`, { raw: true });
+  const marker = /\/\*PRODUCTS_START\*\/[\s\S]*?\/\*PRODUCTS_END\*\//;
+  if (!marker.test(currentJs)) throw Object.assign(new Error("products.js markers missing"), { code: "error" });
+  const productsCode = `/*PRODUCTS_START*/\nconst PRODUCTS = ${JSON.stringify(PRODUCTS)};\n/*PRODUCTS_END*/`;
+  const newJs = currentJs.replace(marker, () => productsCode);
+
+  const tree = [];
+  for (const img of newImages) {
+    const blob = await gh(`/git/blobs`, { method: "POST", body: { content: img.dataUri.split(",")[1], encoding: "base64" } });
+    tree.push({ path: img.path, mode: "100644", type: "blob", sha: blob.sha });
+  }
+  tree.push({ path: "js/products.js", mode: "100644", type: "blob", content: newJs });
+
+  const newTree = await gh(`/git/trees`, { method: "POST", body: { base_tree: headCommit.tree.sha, tree } });
+  const newCommit = await gh(`/git/commits`, { method: "POST", body: { message, tree: newTree.sha, parents: [headSha] } });
+  // Not forced: if someone else saved in between, GitHub refuses (422) and we report a conflict.
+  await gh(`/git/refs/heads/${branch}`, { method: "PATCH", body: { sha: newCommit.sha } });
+}
+
+// One place both Save and Delete go through: the Claude Artifact when running
+// there, otherwise GitHub.
+async function persistCatalog(newImages, message) {
+  if (artifactAPI) return artifactAPI.publish(buildPublishHtml());
+  if (!ghToken()) throw Object.assign(new Error("no token"), { code: "no_token" });
+  return saveCatalogToGitHub(newImages, message);
+}
+
+function catalogErrorMessage(err) {
+  const code = err && err.code;
+  if (code === "no_token") { showGhForm(true); return t("admNeedToken"); }
+  if (code === "bad_token") { showGhForm(true); return t("admBadToken"); }
+  if (code === "not_granted" || code === "not_writer") return t("admSaveNoAccess");
+  if (code === "conflict") return t("admSaveConflict");
+  return t("admSaveError");
+}
+
+// ---- "Connect saving" panel (GitHub token) ----
+function renderGhPanel() {
+  const panel = document.getElementById("admGh");
+  if (!panel) return;
+  panel.hidden = !!artifactAPI; // inside the Claude Artifact, saving needs no token
+  const connected = !!ghToken();
+  document.getElementById("admGhStatus").textContent = connected ? t("admGhConnected") : t("admGhNotConnected");
+  document.getElementById("admGhStatus").className = connected ? "admin-gh-status ok" : "admin-gh-status";
+  document.getElementById("admGhToggle").textContent = connected ? t("admGhChangeBtn") : t("admGhConnectBtn");
+}
+function showGhForm(show) {
+  const form = document.getElementById("admGhForm");
+  if (!form || artifactAPI) return;
+  form.hidden = !show;
+  if (show) setTimeout(() => document.getElementById("admGhToken").focus(), 50);
+}
+document.getElementById("admGhToggle").addEventListener("click", () => {
+  showGhForm(document.getElementById("admGhForm").hidden);
+});
+document.getElementById("admGhSave").addEventListener("click", async () => {
+  const input = document.getElementById("admGhToken");
+  const btn = document.getElementById("admGhSave");
+  const msg = document.getElementById("admGhMsg");
+  const value = input.value.trim();
+  if (!value) return;
+  const previous = ghToken();
+  setGhToken(value);
+  btn.disabled = true; btn.textContent = t("admGhChecking"); msg.hidden = true;
+  try {
+    const repo = await gh("");
+    if (repo.permissions && repo.permissions.push === false) throw Object.assign(new Error("read only"), { code: "bad_token" });
+    input.value = "";
+    showGhForm(false);
+  } catch (err) {
+    setGhToken(previous);
+    msg.hidden = false; msg.textContent = t("admBadToken");
+  } finally {
+    btn.disabled = false; btn.textContent = t("admGhSaveBtn");
+    renderGhPanel();
+  }
+});
 
 document.getElementById("admSave").addEventListener("click", async () => {
   const btn = document.getElementById("admSave");
   const statusEl = document.getElementById("admSaveStatus");
   const showStatus = (msg) => { statusEl.hidden = false; statusEl.textContent = msg; };
-
-  if (!artifactAPI) {
-    showStatus(t("admSaveUnavailable"));
-    return;
-  }
 
   const nameAr = document.getElementById("admNameAr").value.trim() || "منتج جديد";
   const nameEn = document.getElementById("admNameEn").value.trim() || "New Product";
@@ -849,7 +981,18 @@ document.getElementById("admSave").addEventListener("click", async () => {
   statusEl.hidden = true;
 
   try {
-    const images = await Promise.all(admPhotoItems.map(item => item.file ? compressImage(item.file) : Promise.resolve(item.src)));
+    // On GitHub, new photos are saved as their own files (keeps products.js small);
+    // inside the Claude Artifact they stay embedded as before.
+    const newImages = [];
+    const stamp = Date.now().toString(36);
+    const images = await Promise.all(admPhotoItems.map(async (item, i) => {
+      if (!item.file) return item.src;
+      const dataUri = await compressImage(item.file);
+      if (artifactAPI) return dataUri;
+      const path = `assets/products/${id}-${stamp}-${i + 1}.jpg`;
+      newImages.push({ path, dataUri });
+      return path;
+    }));
     const product = {
       id, category: "tshirt",
       typeLabel: { ar: TSHIRT_TYPE_LABEL.ar, en: TSHIRT_TYPE_LABEL.en },
@@ -864,8 +1007,15 @@ document.getElementById("admSave").addEventListener("click", async () => {
     } else {
       PRODUCTS.push(product);
     }
-    await artifactAPI.publish(buildPublishHtml());
-    showStatus(t("admSaved"));
+    await persistCatalog(newImages, `Control Desk: ${isEditing ? "update" : "add"} ${nameEn}`);
+    showStatus(t(artifactAPI ? "admSaved" : "admSavedGh"));
+    if (!artifactAPI) {
+      // Stay on the desk with the saved item selected, so more edits can follow.
+      populateAdminEditOptions();
+      admEditSelect.value = id;
+      loadProductIntoAdminForm(product);
+      showStatus(t("admSavedGh"));
+    }
     // The page reloads automatically once the new version is live.
   } catch (err) {
     if (isEditing && previousProduct && existingIndex !== -1) {
@@ -876,10 +1026,7 @@ document.getElementById("admSave").addEventListener("click", async () => {
     }
     btn.disabled = false;
     btn.textContent = t("admSaveBtn");
-    const code = err && err.code;
-    if (code === "not_granted" || code === "not_writer") showStatus(t("admSaveNoAccess"));
-    else if (code === "conflict") showStatus(t("admSaveConflict"));
-    else showStatus(t("admSaveError"));
+    showStatus(catalogErrorMessage(err));
   }
 });
 
@@ -904,12 +1051,6 @@ document.getElementById("admDelete").addEventListener("click", async () => {
   clearTimeout(admDeleteArmTimer);
   admDeleteArmed = false;
 
-  if (!artifactAPI) {
-    showStatus(t("admSaveUnavailable"));
-    btn.textContent = t("admDeleteBtn");
-    return;
-  }
-
   const idx = PRODUCTS.findIndex(p => p.id === admEditingId);
   if (idx === -1) return;
   const removed = PRODUCTS[idx];
@@ -920,17 +1061,19 @@ document.getElementById("admDelete").addEventListener("click", async () => {
 
   try {
     PRODUCTS.splice(idx, 1);
-    await artifactAPI.publish(buildPublishHtml());
-    showStatus(t("admDeleted"));
+    await persistCatalog([], `Control Desk: delete ${(removed.name && removed.name.en) || removed.id}`);
+    showStatus(t(artifactAPI ? "admDeleted" : "admDeletedGh"));
+    if (!artifactAPI) {
+      populateAdminEditOptions();
+      resetAdminForm();
+      showStatus(t("admDeletedGh"));
+    }
     // The page reloads automatically once the new version is live.
   } catch (err) {
     PRODUCTS.splice(idx, 0, removed);
     btn.disabled = false;
     btn.textContent = t("admDeleteBtn");
-    const code = err && err.code;
-    if (code === "not_granted" || code === "not_writer") showStatus(t("admSaveNoAccess"));
-    else if (code === "conflict") showStatus(t("admSaveConflict"));
-    else showStatus(t("admSaveError"));
+    showStatus(catalogErrorMessage(err));
   }
 });
 
