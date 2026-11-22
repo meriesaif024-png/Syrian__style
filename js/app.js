@@ -58,6 +58,8 @@ const I18N = {
     adminIntro: "عبّي بيانات القطعة، ضيفي الصور، واضغطي \"حفظ بالمتجر\" — بتنحفظ وبتنشر مباشرة لكل الزوار.",
     admEditLabel: "تعديل قطعة موجودة (اختياري)", admNewItem: "➕ قطعة جديدة",
     admNameArLabel: "الاسم (عربي)", admNameEnLabel: "Name (English)",
+    saleBadge: "تخفيض", admOnSaleLabel: "عليها تخفيض 🏷️", admSalePriceLabel: "سعر التخفيض (ر.س)",
+    admSaleInvalid: "سعر التخفيض لازم يكون أقل من السعر الأصلي.",
     admPriceLabel: "السعر (ر.س)", admSizesLabel: "المقاسات والكمية المتوفرة", admColorsLabel: "الألوان المتوفرة",
     admPhotosLabel: "صور القطعة (حتى 7 صور)",
     admPhotosNote: "الصور بتنحفظ مباشرة مع القطعة، ما في داعي ترسليها لحدا.",
@@ -108,6 +110,8 @@ const I18N = {
     adminIntro: "Fill in the product details, add photos, and click \"Save to Store\" — it saves and goes live for every visitor immediately.",
     admEditLabel: "Edit an Existing Item (optional)", admNewItem: "➕ New Item",
     admNameArLabel: "Name (Arabic)", admNameEnLabel: "Name (English)",
+    saleBadge: "SALE", admOnSaleLabel: "On sale 🏷️", admSalePriceLabel: "Sale price (SAR)",
+    admSaleInvalid: "The sale price must be lower than the original price.",
     admPriceLabel: "Price (SAR)", admSizesLabel: "Sizes & Stock Available", admColorsLabel: "Available Colors",
     admPhotosLabel: "Product Photos (up to 7)",
     admPhotosNote: "Photos are saved directly with the product — no need to send them to anyone.",
@@ -148,6 +152,21 @@ const QUOTES = [
 // ---- State ----
 let lang = localStorage.getItem("mmpran_lang") || "ar";
 let cart = JSON.parse(localStorage.getItem("mmpran_cart") || "[]");
+
+// A product is on sale when it has a salePrice lower than its price.
+function isOnSale(p) { return Number(p.salePrice) > 0 && Number(p.salePrice) < Number(p.price); }
+function effectivePrice(p) { return isOnSale(p) ? Number(p.salePrice) : p.price; }
+function priceHtml(p) {
+  if (!isOnSale(p)) return `<span class="price">${priceText(p.price)}</span>`;
+  return `<span class="price price-sale"><s class="price-old">${priceText(p.price)}</s><span class="price-new">${priceText(p.salePrice)}</span></span>`;
+}
+function saleBadgeHtml(p) { return isOnSale(p) ? `<span class="sale-badge">${t("saleBadge")}</span>` : ""; }
+
+// Items saved in the cart earlier pick up the current price (a sale may have started or ended).
+cart.forEach(item => {
+  const p = PRODUCTS.find(x => x.id === item.productId);
+  if (p) item.price = effectivePrice(p);
+});
 const selection = {}; // productId -> { color, size }
 
 function t(key) { return I18N[lang][key]; }
@@ -267,7 +286,7 @@ function renderProducts() {
 
     return `
       <article class="product-card" data-product="${p.id}">
-        <div class="product-art" data-open-detail="${p.id}">${productArtHtml(p, sel)}</div>
+        <div class="product-art" data-open-detail="${p.id}">${saleBadgeHtml(p)}${productArtHtml(p, sel)}</div>
         <div class="product-info">
           <span class="product-type">${p.typeLabel[lang]}</span>
           <h3 class="product-name" data-open-detail="${p.id}">${p.name[lang]}</h3>
@@ -282,7 +301,7 @@ function renderProducts() {
           </div>
           ${lowStock ? `<p class="low-stock-note">${t("lowStockNote")}</p>` : ""}
           <div class="product-row product-row-bottom">
-            <span class="price">${priceText(p.price)}</span>
+            ${priceHtml(p)}
             <button type="button" class="btn btn-add" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${soldOut ? t("soldOut") : t("addToCart")}</button>
           </div>
           <button type="button" class="btn btn-buy-now" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${t("buyNow")}</button>
@@ -320,7 +339,7 @@ function renderProductDetail() {
   const lowStock = selSize && selSize.stock > 0 && selSize.stock <= 2;
 
   document.getElementById("detailContent").innerHTML = `
-    <div class="detail-art">${productArtHtml(p, sel)}</div>
+    <div class="detail-art">${saleBadgeHtml(p)}${productArtHtml(p, sel)}</div>
     <div class="detail-info">
       <span class="product-type">${p.typeLabel[lang]}</span>
       <h2>${p.name[lang]}</h2>
@@ -335,7 +354,7 @@ function renderProductDetail() {
       </div>
       ${lowStock ? `<p class="low-stock-note">${t("lowStockNote")}</p>` : ""}
       <div class="product-row product-row-bottom">
-        <span class="price">${priceText(p.price)}</span>
+        ${priceHtml(p)}
         <button type="button" class="btn btn-add" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${soldOut ? t("soldOut") : t("addToCart")}</button>
       </div>
       <button type="button" class="btn btn-buy-now" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${t("buyNow")}</button>
@@ -435,7 +454,7 @@ function addToCart(productId) {
   } else {
     cart.push({
       lineId, productId, color: sel.color, size: sel.size, qty,
-      name: p.name, price: p.price
+      name: p.name, price: effectivePrice(p)
     });
   }
   sel.qty = 1;
@@ -602,6 +621,7 @@ function resetAdminForm() {
   document.getElementById("admNameAr").value = "";
   document.getElementById("admNameEn").value = "";
   document.getElementById("admPrice").value = 75;
+  setAdminSale(false, "");
   document.querySelectorAll("#adminPage .admin-colors input").forEach(el => { el.checked = true; });
   document.querySelectorAll("#adminPage .admin-size-row").forEach(row => {
     row.querySelector(".size-check").checked = true;
@@ -630,6 +650,7 @@ function loadProductIntoAdminForm(p) {
   document.getElementById("admNameAr").value = (p.name && p.name.ar) || "";
   document.getElementById("admNameEn").value = (p.name && p.name.en) || "";
   document.getElementById("admPrice").value = p.price || 0;
+  setAdminSale(isOnSale(p), isOnSale(p) ? p.salePrice : "");
   document.querySelectorAll("#adminPage .admin-colors input").forEach(el => {
     el.checked = (p.colors || []).includes(el.value);
   });
@@ -656,6 +677,16 @@ function loadProductIntoAdminForm(p) {
   renderAdminPhotoThumbs();
   renderAdminPreview();
 }
+
+function setAdminSale(on, salePrice) {
+  document.getElementById("admOnSale").checked = on;
+  document.getElementById("admSalePrice").value = salePrice;
+  document.getElementById("admSalePriceWrap").hidden = !on;
+}
+document.getElementById("admOnSale").addEventListener("change", (e) => {
+  document.getElementById("admSalePriceWrap").hidden = !e.target.checked;
+  if (e.target.checked) setTimeout(() => document.getElementById("admSalePrice").focus(), 30);
+});
 
 admEditSelect.addEventListener("change", () => {
   const id = admEditSelect.value;
@@ -970,6 +1001,13 @@ document.getElementById("admSave").addEventListener("click", async () => {
   const colors = currentAdminColors();
   const descAr = document.getElementById("admDescAr").value.trim();
   const descEn = document.getElementById("admDescEn").value.trim();
+  const onSale = document.getElementById("admOnSale").checked;
+  const salePrice = Number(document.getElementById("admSalePrice").value) || 0;
+  if (onSale && !(salePrice > 0 && salePrice < price)) {
+    showStatus(t("admSaleInvalid"));
+    document.getElementById("admSalePrice").focus();
+    return;
+  }
 
   const isEditing = !!admEditingId;
   const id = isEditing ? admEditingId : `${slugify(nameEn)}-${Date.now().toString().slice(-5)}`;
@@ -1001,6 +1039,7 @@ document.getElementById("admSave").addEventListener("click", async () => {
       desc: { ar: descAr, en: descEn }
     };
     if (images.length > 0) product.images = images;
+    if (onSale) product.salePrice = salePrice;
 
     if (isEditing && existingIndex !== -1) {
       PRODUCTS[existingIndex] = product;
