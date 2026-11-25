@@ -54,8 +54,7 @@ img, svg { display: block; max-width: 100%; }
 /* ---------- Header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 40;
-  background: rgba(255,255,255,.96);
-  backdrop-filter: blur(8px);
+  background: #fff;
   border-bottom: 1px solid var(--border);
 }
 .site-header::after {
@@ -243,11 +242,6 @@ img, svg { display: block; max-width: 100%; }
   border-image: repeating-linear-gradient(45deg,
       #6e1620 0 10px, var(--gold) 10px 20px, var(--green) 20px 30px, #6e1620 30px 40px) 10;
   opacity: .55; pointer-events: none;
-}
-.story::after {
-  content: ""; position: absolute; inset: 0;
-  opacity: .05; mix-blend-mode: multiply; pointer-events: none;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
 }
 .story-head { position: relative; z-index: 2; max-width: 640px; margin: 0 auto 56px; }
 .story-rule { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }

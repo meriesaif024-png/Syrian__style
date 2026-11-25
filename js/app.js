@@ -219,10 +219,20 @@ function renderQuote() {
 // ---- Products ----
 function priceText(n) { return `${n} ${CONFIG.CURRENCY}`; }
 
+// Products saved without sizes (e.g. a flag) are "one size": always orderable,
+// no size picker, quantity capped at ONE_SIZE_MAX_QTY.
+const ONE_SIZE_MAX_QTY = 20;
+function hasSizes(p) { return Array.isArray(p.sizes) && p.sizes.length > 0; }
+function selectedSize(p, sel) {
+  return hasSizes(p) ? p.sizes.find(s => s.size === sel.size) : { size: "", stock: ONE_SIZE_MAX_QTY };
+}
+
 function ensureSelection(p) {
+  if (!Array.isArray(p.sizes)) p.sizes = [];
+  if (!Array.isArray(p.colors)) p.colors = [];
   if (!selection[p.id]) {
     const firstInStock = p.sizes.find(s => s.stock > 0) || p.sizes[0];
-    selection[p.id] = { color: p.colors[0], size: firstInStock.size, imgIndex: 0, qty: 1 };
+    selection[p.id] = { color: p.colors[0] || "", size: firstInStock ? firstInStock.size : "", imgIndex: 0, qty: 1 };
   }
 }
 
@@ -247,6 +257,7 @@ function colorSwatchesHtml(p, sel) {
 
 // Customers never see exact stock counts — only a low-stock nudge near the end.
 function sizeSelectHtml(p, sel) {
+  if (!hasSizes(p)) return "";
   const options = p.sizes.map(s => {
     const label = s.stock <= 0 ? `${s.size} — ${t("soldOut")}` : s.size;
     return `<option value="${s.size}" ${sel.size === s.size ? "selected" : ""} ${s.stock <= 0 ? "disabled" : ""}>${label}</option>`;
@@ -261,54 +272,63 @@ function productArtHtml(p, sel) {
       <div class="product-thumbs">
         ${p.images.map((src, i) => `
           <button type="button" class="product-thumb ${i === activeIdx ? "active" : ""}" data-product="${p.id}" data-img="${i}">
-            <img src="${src}" alt="">
+            <img src="${src}" alt="" loading="lazy" decoding="async">
           </button>
         `).join("")}
       </div>` : "";
-    return `<img class="product-photo" src="${p.images[activeIdx]}" alt="${p.name[lang]}">${thumbs}`;
+    return `<img class="product-photo" src="${p.images[activeIdx]}" alt="${p.name[lang]}" decoding="async">${thumbs}`;
   }
   return productArtworkSVG(p, sel.color);
 }
 
-function renderProducts() {
+function productCardHtml(p) {
+  ensureSelection(p);
+  const sel = selection[p.id];
+  const selSize = selectedSize(p, sel);
+  const soldOut = !selSize || selSize.stock <= 0;
+  const lowStock = hasSizes(p) && selSize && selSize.stock > 0 && selSize.stock <= 2;
+
+  return `
+    <article class="product-card" data-product="${p.id}">
+      <div class="product-art" data-open-detail="${p.id}">${saleBadgeHtml(p)}${productArtHtml(p, sel)}</div>
+      <div class="product-info">
+        <span class="product-type">${p.typeLabel[lang]}</span>
+        <h3 class="product-name" data-open-detail="${p.id}">${p.name[lang]}</h3>
+        <p class="product-desc">${p.desc[lang]}</p>
+        <div class="product-row">
+          <div class="swatches" role="group" aria-label="${t('colorLabel')}">${colorSwatchesHtml(p, sel)}</div>
+          ${sizeSelectHtml(p, sel)}
+        </div>
+        <div class="product-row">
+          <span class="qty-label">${t('qty')}</span>
+          ${qtyPickerHtml(p, sel, selSize ? selSize.stock : 1)}
+        </div>
+        ${lowStock ? `<p class="low-stock-note">${t("lowStockNote")}</p>` : ""}
+        <div class="product-row product-row-bottom">
+          ${priceHtml(p)}
+          <button type="button" class="btn btn-add" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${soldOut ? t("soldOut") : t("addToCart")}</button>
+        </div>
+        <button type="button" class="btn btn-buy-now" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${t("buyNow")}</button>
+      </div>
+    </article>
+  `;
+}
+
+// Redraws the whole grid, or only one product's card when an id is given
+// (much lighter on phones than rebuilding every card and photo on each tap).
+function renderProducts(onlyId) {
   const grid = document.getElementById("productGrid");
+  if (onlyId) {
+    const card = grid.querySelector(`.product-card[data-product="${onlyId}"]`);
+    const p = PRODUCTS.find(pr => pr.id === onlyId);
+    if (card && p) { card.outerHTML = productCardHtml(p).trim(); return; }
+  }
   const list = PRODUCTS;
   if (list.length === 0) {
     grid.innerHTML = `<p class="shop-empty">${t("emptyShop")}</p>`;
     return;
   }
-  grid.innerHTML = list.map(p => {
-    ensureSelection(p);
-    const sel = selection[p.id];
-    const selSize = p.sizes.find(s => s.size === sel.size);
-    const soldOut = !selSize || selSize.stock <= 0;
-    const lowStock = selSize && selSize.stock > 0 && selSize.stock <= 2;
-
-    return `
-      <article class="product-card" data-product="${p.id}">
-        <div class="product-art" data-open-detail="${p.id}">${saleBadgeHtml(p)}${productArtHtml(p, sel)}</div>
-        <div class="product-info">
-          <span class="product-type">${p.typeLabel[lang]}</span>
-          <h3 class="product-name" data-open-detail="${p.id}">${p.name[lang]}</h3>
-          <p class="product-desc">${p.desc[lang]}</p>
-          <div class="product-row">
-            <div class="swatches" role="group" aria-label="${t('colorLabel')}">${colorSwatchesHtml(p, sel)}</div>
-            ${sizeSelectHtml(p, sel)}
-          </div>
-          <div class="product-row">
-            <span class="qty-label">${t('qty')}</span>
-            ${qtyPickerHtml(p, sel, selSize ? selSize.stock : 1)}
-          </div>
-          ${lowStock ? `<p class="low-stock-note">${t("lowStockNote")}</p>` : ""}
-          <div class="product-row product-row-bottom">
-            ${priceHtml(p)}
-            <button type="button" class="btn btn-add" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${soldOut ? t("soldOut") : t("addToCart")}</button>
-          </div>
-          <button type="button" class="btn btn-buy-now" data-product="${p.id}" ${soldOut ? "disabled" : ""}>${t("buyNow")}</button>
-        </div>
-      </article>
-    `;
-  }).join("");
+  grid.innerHTML = list.map(productCardHtml).join("");
 }
 
 // ---- Product detail view (opened by tapping a product's photo or name) ----
@@ -334,9 +354,9 @@ function renderProductDetail() {
   if (!p) { closeProductDetail(); return; }
   ensureSelection(p);
   const sel = selection[p.id];
-  const selSize = p.sizes.find(s => s.size === sel.size);
+  const selSize = selectedSize(p, sel);
   const soldOut = !selSize || selSize.stock <= 0;
-  const lowStock = selSize && selSize.stock > 0 && selSize.stock <= 2;
+  const lowStock = hasSizes(p) && selSize && selSize.stock > 0 && selSize.stock <= 2;
 
   document.getElementById("detailContent").innerHTML = `
     <div class="detail-art">${saleBadgeHtml(p)}${productArtHtml(p, sel)}</div>
@@ -366,14 +386,14 @@ function handleProductAreaClick(e) {
   const swatch = e.target.closest(".swatch");
   if (swatch) {
     selection[swatch.dataset.product].color = swatch.dataset.color;
-    renderProducts();
+    renderProducts(swatch.dataset.product);
     if (currentDetailId) renderProductDetail();
     return;
   }
   const thumb = e.target.closest(".product-thumb");
   if (thumb) {
     selection[thumb.dataset.product].imgIndex = Number(thumb.dataset.img);
-    renderProducts();
+    renderProducts(thumb.dataset.product);
     if (currentDetailId) renderProductDetail();
     return;
   }
@@ -409,14 +429,14 @@ function handleProductAreaChange(e) {
   if (e.target.classList.contains("size-select")) {
     selection[e.target.dataset.product].size = e.target.value;
     selection[e.target.dataset.product].qty = 1;
-    renderProducts();
+    renderProducts(e.target.dataset.product);
     if (currentDetailId) renderProductDetail();
     return;
   }
   if (e.target.classList.contains("qty-input")) {
     const p = PRODUCTS.find(pr => pr.id === e.target.dataset.product);
     const sel = selection[e.target.dataset.product];
-    const selSize = p.sizes.find(s => s.size === sel.size);
+    const selSize = selectedSize(p, sel);
     const max = Math.max(selSize ? selSize.stock : 1, 1);
     setQty(e.target.dataset.product, Number(e.target.value), max);
   }
@@ -425,14 +445,14 @@ function handleProductAreaChange(e) {
 function setQty(productId, value, max) {
   const clamped = Math.min(Math.max(Math.round(value) || 1, 1), max);
   selection[productId].qty = clamped;
-  renderProducts();
+  renderProducts(productId);
   if (currentDetailId) renderProductDetail();
 }
 
 function adjustQty(productId, delta) {
   const p = PRODUCTS.find(pr => pr.id === productId);
   const sel = selection[productId];
-  const selSize = p.sizes.find(s => s.size === sel.size);
+  const selSize = selectedSize(p, sel);
   const max = Math.max(selSize ? selSize.stock : 1, 1);
   setQty(productId, (sel.qty || 1) + delta, max);
 }
@@ -460,7 +480,7 @@ function addToCart(productId) {
   sel.qty = 1;
   saveCart();
   renderCart();
-  renderProducts();
+  renderProducts(productId);
   if (currentDetailId) renderProductDetail();
 
   document.querySelectorAll(`.btn-add[data-product="${productId}"]`).forEach(btn => {
@@ -513,7 +533,7 @@ function renderCart() {
         <span class="cart-swatch swatch-${item.color}"></span>
         <div class="cart-item-info">
           <strong>${item.name[lang]}</strong>
-          <span class="cart-item-meta">${t("sizeLabel")}: ${item.size}</span>
+          ${item.size ? `<span class="cart-item-meta">${t("sizeLabel")}: ${item.size}</span>` : ""}
           <div class="qty-control">
             <button type="button" data-qty="-1" data-line="${item.lineId}">−</button>
             <span>${item.qty}</span>
@@ -582,8 +602,8 @@ document.getElementById("checkoutForm").addEventListener("submit", (e) => {
     const nameHasColor = displayName.includes(colorName);
     const price = priceText(i.price * i.qty);
     return lang === "ar"
-      ? `• ${displayName} — ${nameHasColor ? "" : `لون ${colorName}، `}مقاس ${i.size}، الكمية ${i.qty} (${price})`
-      : `• ${displayName} — ${nameHasColor ? "" : `${colorName} color, `}size ${i.size}, qty ${i.qty} (${price})`;
+      ? `• ${displayName} — ${nameHasColor || !i.color ? "" : `لون ${colorName}، `}${i.size ? `مقاس ${i.size}، ` : ""}الكمية ${i.qty} (${price})`
+      : `• ${displayName} — ${nameHasColor || !i.color ? "" : `${colorName} color, `}${i.size ? `size ${i.size}, ` : ""}qty ${i.qty} (${price})`;
   }).join("\n");
 
   const greeting = lang === "ar"
